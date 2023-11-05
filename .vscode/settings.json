@@ -1,6 +1,8 @@
 {
     "cSpell.enableFiletypes": [
         "!html",
-        "!php"
+        "!markdown",
+        "!php",
+        "!plaintext"
     ]
 }

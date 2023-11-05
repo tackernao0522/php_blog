@@ -1,0 +1,22 @@
+.profile-title {
+  font-size: 24px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.profile-info {
+  margin: 10px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+
+.info-label {
+  font-weight: bold;
+  display: inline;
+}
+
+.info-value {
+  margin-left: 10px;
+  display: inline;
+}

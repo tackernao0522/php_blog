@@ -1,0 +1,20 @@
+# .htaccess (プロジェクトルートディレクトリに置く)
+
+# リライト設定
+RewriteEngine On 
+
+# index.phpをフロントコントローラとして設定
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
+
+# キャッシュ設定
+<FilesMatch "\.(jpg|jpeg|png|gif|js|css|swf)$">
+    Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
+
+# PHPの設定
+php_value max_execution_time 300
+php_value memory_limit 256M
+php_value post_max_size 100M
+php_value upload_max_filesize 50M

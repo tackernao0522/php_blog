@@ -1,0 +1,137 @@
+User.phpから記述
+
+users (ユーザーテーブル):
+
+user_id (主キー)
+username
+email
+password (ハッシュ化)
+profile_image_url
+created_at
+user_profiles (ユーザープロフィールテーブル):
+
+profile_id (主キー)
+user_id (外部キー: users)
+bio
+location
+social_links (JSONB形式でソーシャルメディアリンク)
+categories (カテゴリーテーブル):
+
+category_id (主キー)
+name
+tags (タグテーブル):
+
+tag_id (主キー)
+name
+blogs (ブログテーブル):
+
+blog_id (主キー)
+user_id (外部キー: users)
+category_id (外部キー: categories)
+title
+content
+published_at
+is_published
+is_private
+blog_tags (ブログタグテーブル):
+
+blog_tag_id (主キー)
+blog_id (外部キー: blogs)
+tag_id (外部キー: tags)
+blog_likes (ブログいいねテーブル):
+
+like_id (主キー)
+blog_id (外部キー: blogs)
+user_id (外部キー: users)
+comments (コメントテーブル):
+
+comment_id (主キー)
+blog_id (外部キー: blogs)
+user_id (外部キー: users)
+content
+created_at
+notifications (通知テーブル):
+
+notification_id (主キー)
+user_id (外部キー: users)
+type (通知タイプ: コメント、いいねなど)
+related_id (関連するブログ、コメント、ユーザーのID)
+is_read
+created_at
+
+ブログアプリプロジェクト要件定義書
+プロジェクト概要
+プロジェクト名: ブログアプリ開発
+
+プロジェクト目標: ユーザーがブログを投稿、閲覧、コメント、お気に入りに追加できるブログプラットフォームを開発する。
+
+機能要件
+ユーザー機能
+ユーザー登録とログイン
+ユーザープロフィールの管理
+ダイレクトメッセージ機能
+ブログ関連機能
+ブログの投稿、編集、削除
+カテゴリとタグの管理
+コメント投稿と管理
+いいね機能
+お気に入りブログの管理
+ユーザーエクスペリエンス
+レスポンシブデザインの実装
+ユーザー通知と通知センター
+カテゴリとタグによるブログのフィルタリング
+検索機能
+非機能要件
+セキュリティ要件
+
+パスワードのハッシュ化
+データの暗号化
+認証とアクセスコントロール
+セキュリティ脆弱性テスト
+パフォーマンス要件
+
+応答時間の最適化
+スケーラビリティ
+キャッシュの実装
+可用性と信頼性
+
+冗長性の確保
+バックアップと復旧計画
+システムの監視
+拡張性
+
+モジュラーアーキテクチャ
+プラグインサポート
+国際化とローカライゼーション
+
+データ保護とプライバシー
+
+GDPRなどのプライバシー規制へのコンプライアンス
+テストとデバッグ
+
+ユニットテスト、統合テスト、システムテスト
+デバッグとエラーログの実装
+サポートとドキュメンテーション
+
+ユーザーサポート機能
+アプリケーションのドキュメンテーション
+法的規制とコンプライアンス
+
+インフラストラクチャとクラウド提案
+クラウドプロバイダ: AWS、Microsoft Azure、Google Cloud Platform（選択肢の検討が必要）
+仮想マシン: EC2（AWS）、Compute Engine（GCP）、仮想マシン（Azure）
+データベース: RDS（AWS）、Cloud SQL（GCP）、Azure SQL Database（Azure）
+ストレージ: S3（AWS）、Cloud Storage（GCP）、Blob Storage（Azure）
+サーバーレスコンピューティング: Lambda（AWS）、Cloud Functions（GCP）
+プロジェクトスケジュール
+要件定義と設計: [期間]
+開発と実装: [期間]
+テストと品質保証: [期間]
+デプロイメントと運用: [期間]
+サポートとメンテナンス
+サポートと定期的なアップデートの提供
+この要件定義書はプロジェクトの全体的な方向性と目標を示し、機能要件と非機能要件の概要を提供しています。プロジェクトの成功を確保するために、要件の詳細な定義、設計、開発、テスト、運用、サポートフェーズにわたる詳細な計画と実行が必要です。
+
+
+
+

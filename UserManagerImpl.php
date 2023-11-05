@@ -10,8 +10,10 @@ class UserManagerImpl implements UserManager
     public function __construct()
     {
         $dsn = "pgsql:host=" . DB_HOST . ";dbname=" . DB_NAME;
+        $username = DB_USER;
+        $password = 'null'; // パスワードを直接指定
         try {
-            $this->conn = new PDO($dsn, DB_USER, DB_PASSWORD);
+            $this->conn = new PDO($dsn, $username, $password);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             die("Database connection failed: " . $e->getMessage());
@@ -45,7 +47,7 @@ class UserManagerImpl implements UserManager
                 return null;
             }
 
-            return new User($user['id'], $user['username'], $user['email'], $user['password']);
+            return new User($user['id'], $user['username'], $user['email'], $user['password'], $user['passwordHasher'], $user['userProfile']);
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return null;
@@ -64,7 +66,10 @@ class UserManagerImpl implements UserManager
                 return null;
             }
 
-            return new User($user['id'], $user['username'], $user['email'], $user['password']);
+            // ユーザー情報を正しく取得したら、User クラスのコンストラクタで正しくインスタンス化
+            $userProfile = null; // プロフィール情報はまだ取得できていないので null を設定
+            $passwordHasher = new PasswordHasher(); // パスワードハッシュの生成方法は適切に設定
+            return new User($user['id'], $user['username'], $user['email'], $user['password'], $passwordHasher, $userProfile);
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return null;
@@ -83,7 +88,7 @@ class UserManagerImpl implements UserManager
                 return null;
             }
 
-            return new User($user['id'], $user['username'], $user['email'], $user['password']);
+            return new User($user['id'], $user['username'], $user['email'], $user['password'], $user['passwordHasher'], $user['userProfile']);
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return null;
