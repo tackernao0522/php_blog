@@ -1,40 +1,61 @@
 <?php
+// login.php
+
+// 必要なファイルをインクルード
 require_once 'User.php';
-require_once 'db.php'; // データベース接続用ファイル
+require_once 'UserManager.php';
+require_once 'UserManagerImpl.php';
+require_once 'PasswordHasher.php';
+require_once 'config.php';
+require_once 'UserImpl.php';
 
-$loginMessage = ''; // ログインメッセージを初期化
+// エラーレポーティングを設定
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// ユーザー名とパスワードがフォームから送信されたかどうかを確認
+// セッション開始
+session_start();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    // CSRFトークンの検証
+    if (isset($_SESSION['csrf_token']) && isset($_POST['csrf_token']) && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        // POSTデータからユーザー名とパスワードを取得
+        $username = $_POST['username'];
+        $password = $_POST['password'];
 
-    // データベースからユーザー情報を取得するクエリを実行
-    $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
-    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-    $stmt->execute();
-    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        // ユーザー認証
+        $userManager = new UserManagerImpl();
+        $user = $userManager->getUserByUsername($username);
 
-    if ($userData) {
-        // ユーザー情報が取得できた場合
-        $user = new User($userData['id'], $userData['username'], $userData['email'], $userData['password']);
+        if ($user && $user->verifyPassword($password)) {
+            // ログインが成功した場合、セッションにuser_idを設定
+            $_SESSION['user_id'] = $user->getId();
 
-        $userProvidedPassword = $password;
+            // プロフィールが登録されていない場合、プロフィール登録画面にリダイレクト
+            $userProfile = getUserProfile($user->getId());
+            if (!$userProfile) {
+                header("Location: profile_input.php");
+                exit;
+            }
 
-        // パスワードの検証
-        if ($user->verifyPassword($userProvidedPassword)) {
-            $loginMessage = 'パスワードが一致しました。';
+            // プロフィール情報をセッションに保存
+            $_SESSION['userProfile'] = $userProfile;
+
+            header("Location: profile.php"); // プロフィールページにリダイレクト
+            exit;
         } else {
-            $loginMessage = 'パスワードが一致しません。';
+            echo "認証エラー";
         }
     } else {
-        // ユーザー情報が見つからなかった場合
-        $loginMessage = 'ユーザーが存在しません。';
+        die("CSRF攻撃を検知");
     }
 }
+
+// CSRFトークンの生成
+$csrfToken = bin2hex(random_bytes(32));
+$_SESSION['csrf_token'] = $csrfToken;
 ?>
 
-<!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -46,14 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <h1>ユーザーログイン</h1>
-    <form id="login-form" method="POST">
-        <label for="username">ユーザー名：</label>
+    <form id="login-form" method="POST" action="login.php">
+        <!-- CSRFトークンをフォーム内に追加 -->
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+        <label for="username">ユーザー名:</label>
         <input type="text" id="username" name="username" required><br>
-        <label for="password">パスワード：</label>
+        <label for="password">パスワード:</label>
         <input type="password" id="password" name="password" required><br>
         <button type="submit">ログイン</button>
     </form>
-    <p id="login-message"><?php echo $loginMessage; ?></p>
 </body>
 
 </html>

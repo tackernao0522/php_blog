@@ -1,24 +1,26 @@
 <?php
 require_once 'PasswordHasher.php';
+require_once 'UserProfile.php';
 
 class User
 {
     private int $id;
     private string $username;
     private string $email;
-    private string $password;
-    private PasswordHasher $passwordHasher;
+    private string $passwordHash;
+    private ?PasswordHasher $passwordHasher; // PasswordHasher クラスのインスタンスを許容
+    private ?UserProfile $userProfile; // UserProfile クラスのインスタンスを許容
 
-    public function __construct(int $id, string $username, string $email, string $password)
+    public function __construct(int $id, string $username, string $email, string $passwordHash, ?PasswordHasher $passwordHasher, ?UserProfile $userProfile)
     {
         $this->id = $id;
         $this->username = $username;
         $this->email = $email;
-        $this->password = $password;
-        $this->passwordHasher = new PasswordHasher(); // PasswordHasher インスタンスを生成
+        $this->passwordHash = $passwordHash;
+        $this->passwordHasher = $passwordHasher;
+        $this->userProfile = $userProfile;
     }
 
-    // ゲッターとセッターメソッド
     public function getId(): int
     {
         return $this->id;
@@ -36,17 +38,16 @@ class User
 
     public function getPassword(): string
     {
-        return $this->password;
+        return $this->passwordHash;
     }
 
-    /**
-     * パスワードの検証
-     * 
-     * @param string $inputPassword ユーザーが入力したパスワード
-     * @return bool パスワードが一致する場合は true、それ以外は false
-     */
+    public function getUserProfile(): ?UserProfile
+    {
+        return $this->userProfile;
+    }
+
     public function verifyPassword(string $inputPassword): bool
     {
-        return $this->passwordHasher->verifyPassword($inputPassword, $this->password);
+        return $this->passwordHasher->verifyPassword($inputPassword, $this->passwordHash);
     }
 }

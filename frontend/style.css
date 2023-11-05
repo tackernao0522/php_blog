@@ -43,3 +43,15 @@ button {
   margin: 20px;
   color: red;
 }
+
+#toast {
+  display: none;
+  background-color: #4caf50;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}

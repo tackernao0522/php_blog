@@ -4,25 +4,43 @@ require_once 'UserManager.php';
 require_once 'UserManagerImpl.php';
 require_once 'PasswordHasher.php';
 require_once 'config.php';
-require_once 'UserImpl.php'; 
+require_once 'UserImpl.php';
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    // ここに修正を適用
+    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
 
     $passwordHasher = new PasswordHasher();
     $hashedPassword = $passwordHasher->hashPassword($password);
 
-    $user = new UserImpl(0, $username, $email, $hashedPassword);
+    // ここでUserProfileに関する情報を取得または設定する必要があります
+    $userId = 1; // ユーザーIDを適切な方法で設定
+    $fullName = 'ユーザーのフルネーム'; // ユーザーのフルネームを設定
+    $bio = 'ユーザーのバイオ'; // ユーザーのバイオを設定
+
+    $user = new UserImpl(0, $username, $email, $hashedPassword, $userId, $fullName, $bio);
     $userManager = new UserManagerImpl();
 
     if ($userManager->createUser($user)) {
-        echo 'ユーザー登録が成功しました。';
+        echo 'ユーザー登録が成功しました。プロフィール登録してください。';
+        // ユーザー登録が成功したらログインページにリダイレクト
+        header("Location: login.php");
+        exit;
     } else {
         echo 'ユーザー登録に失敗しました。';
     }
 }
+
+// CSRFトークンの生成
+$csrfToken = bin2hex(random_bytes(32));
+$_SESSION['csrf_token'] = $csrfToken;
 ?>
 
 <!DOCTYPE html>
@@ -38,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <h1>ユーザー登録</h1>
     <form id="register-form" method="POST">
+        <!-- CSRFトークンをフォーム内に追加 -->
+        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
         <label for="username">ユーザー名:</label>
         <input type="text" id="username" name="username" required><br>
         <label for="email">メールアドレス:</label>
