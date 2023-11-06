@@ -29,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userManager = new UserManagerImpl();
 
     if ($userManager->createUser($user)) {
-        echo 'ユーザー登録が成功しました。プロフィール登録してください。';
-        // ユーザー登録が成功したらログインページにリダイレクト
+        $_SESSION['toast_message'] = 'ユーザー登録が完了しました。ログインしてください。';
+
         header("Location: login.php");
         exit;
     } else {

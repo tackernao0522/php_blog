@@ -44,7 +44,7 @@ class UserController
     }
 
     // プロフィール登録処理を処理するメソッドを追加
-    public function editProfile()
+    public function storeProfile()
     {
         // ログインしていない場合、ログインページにリダイレクト
         if (!isset($_SESSION['user_id'])) {

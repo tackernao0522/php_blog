@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // プロフィールが登録されていない場合、プロフィール登録画面にリダイレクト
             $userProfile = getUserProfile($user->getId());
             if (!$userProfile) {
+                $_SESSION['toast_profile_input_message'] = 'プロフィールを登録してください。';
                 header("Location: profile_input.php");
                 exit;
             }
@@ -77,5 +78,24 @@ $_SESSION['csrf_token'] = $csrfToken;
         <button type="submit">ログイン</button>
     </form>
 </body>
+
+
+<!-- Toastifyの読み込み -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+    <?php if (isset($_SESSION['toast_message'])) : ?>
+        Toastify({
+            text: "<?php echo $_SESSION['toast_message']; ?>",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+            }
+        }).showToast();
+    <?php endif; ?>
+</script>
 
 </html>

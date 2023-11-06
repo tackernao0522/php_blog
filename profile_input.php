@@ -16,9 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRFトークンの検証
     if (isset($_POST['csrf_token']) && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
         // editProfileメソッドを呼び出し
-        $userController->editProfile();
-        
-        // editProfileメソッド内で新しいプロフィールが作成された場合、profile.phpにリダイレクト
+        $userController->storeProfile();
+        // storeProfileメソッド内で新しいプロフィールが作成された場合、profile.phpにリダイレクト
         header("Location: profile.php");
         exit;
     } else {
@@ -53,5 +52,23 @@ $_SESSION['csrf_token'] = $csrfToken;
         <button type="submit">保存</button>
     </form>
 </body>
+
+<!-- Toastifyの読み込み -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+    <?php if (isset($_SESSION['toast_profile_input_message'])) : ?>
+        Toastify({
+            text: "<?php echo $_SESSION['toast_profile_input_message']; ?>",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+            }
+        }).showToast();
+    <?php endif; ?>
+</script>
 
 </html>
