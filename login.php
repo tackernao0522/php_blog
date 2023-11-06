@@ -1,6 +1,4 @@
 <?php
-// login.php
-
 // 必要なファイルをインクルード
 require_once 'User.php';
 require_once 'UserManager.php';
@@ -8,13 +6,23 @@ require_once 'UserManagerImpl.php';
 require_once 'PasswordHasher.php';
 require_once 'config.php';
 require_once 'UserImpl.php';
+require_once 'controllers/UserController.php';
 
 // エラーレポーティングを設定
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // セッション開始
-session_start();
+// session_start();
+
+// UserController クラスのインスタンスを作成
+$userController = new UserController();
+
+if ($userController->isUserLoggedIn()) {
+    // ログイン済みの場合、プロフィールページにリダイレクト
+    header("Location: profile.php");
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRFトークンの検証

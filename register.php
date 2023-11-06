@@ -11,6 +11,12 @@ ini_set('display_errors', 1);
 
 session_start();
 
+// アクセス制御: ログイン済みの場合、プロフィールページにリダイレクト
+if (isset($_SESSION['user_id'])) {
+    header("Location: profile.php");
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ここに修正を適用
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -29,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userManager = new UserManagerImpl();
 
     if ($userManager->createUser($user)) {
-        $_SESSION['toast_message'] = 'ユーザー登録が完了しました。ログインしてください。';
+        $_SESSION['toast_message'] = 'ログインしてください。';
 
         header("Location: login.php");
         exit;

@@ -1,6 +1,7 @@
 <?php
 // UserController.phpをインクルード
 require_once 'controllers/UserController.php';
+require_once 'UserProfile.php';
 
 // ユーザーコントローラークラスのインスタンスを作成
 $userController = new UserController();
@@ -8,6 +9,13 @@ $userController = new UserController();
 // ログインしていない場合、ログインページにリダイレクト
 if (!$userController->isUserLoggedIn()) {
     header("Location: login.php");
+    exit;
+}
+
+// ユーザープロフィールが既に登録済みの場合、profile.phpにリダイレクト
+$existingProfile = getUserProfile($_SESSION['user_id']);
+if ($existingProfile) {
+    header("Location: profile.php");
     exit;
 }
 
@@ -41,7 +49,7 @@ $_SESSION['csrf_token'] = $csrfToken;
 </head>
 
 <body>
-    <h1>ユーザープロフィール編集</h1>
+    <h1>プロフィール登録</h1>
     <form id="profile-form" method="POST">
         <!-- CSRFトークンをフォーム内に追加 -->
         <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">

@@ -7,6 +7,11 @@ class UserController
     public function login()
     {
         // ログイン処理
+        if ($this->isUserLoggedIn()) {
+            // ログイン済みの場合、プロフィールページにリダイレクト
+            header("Location: profile.php");
+            exit;
+        }
         $this->render('login.php');
     }
 
@@ -18,29 +23,33 @@ class UserController
 
     public function profile()
     {
-        // セッションからユーザーIDを取得
-        if (isset($_SESSION['user_id'])) {
-            $userId = $_SESSION['user_id'];
-
+        if ($this->isUserLoggedIn()) {
             // ユーザープロフィールを取得
-            // arrayのみを許容するように型定義を変更
-            /** @var array */
-            $userProfile = getUserProfile($userId);
+            $userProfile = getUserProfile($_SESSION['user_id']);
 
-
-            // nullチェック
-            if (is_null($userProfile)) {
+            if (!$userProfile) {
                 exit('プロフィールがありません');
             }
 
-            // クラス内でセッション変数を直接設定
             $_SESSION['userProfile'] = $userProfile;
+            $this->render('profile.php');
         } else {
-            // セッションにユーザーIDが設定されていない場合の処理
-            exit('ログインしていません');
+            // ログインしていない場合、ログインページにリダイレクト
+            header("Location: login.php");
+            exit;
         }
+    }
 
-        $this->render('profile.php');
+    public function logout()
+    {
+        // ログアウト処理
+        if ($this->isUserLoggedIn()) {
+            // ログイン中の場合、セッションを破棄してログアウト
+            session_destroy();
+        }
+        // ログインページにリダイレクト
+        header("Location: login.php");
+        exit;
     }
 
     // プロフィール登録処理を処理するメソッドを追加
