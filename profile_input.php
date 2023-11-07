@@ -3,6 +3,9 @@
 require_once 'controllers/UserController.php';
 require_once 'UserProfile.php';
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // ユーザーコントローラークラスのインスタンスを作成
 $userController = new UserController();
 
@@ -44,21 +47,24 @@ $_SESSION['csrf_token'] = $csrfToken;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ユーザープロフィール編集</title>
+    <title>プロフィール登録</title>
     <link rel="stylesheet" type="text/css" href="frontend/style.css">
 </head>
 
 <body>
+    <?php require_once 'header.php'; ?>
     <h1>プロフィール登録</h1>
-    <form id="profile-form" method="POST">
-        <!-- CSRFトークンをフォーム内に追加 -->
-        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-        <label for="full_name">フルネーム:</label>
-        <input type="text" id="full_name" name="full_name" required><br>
-        <label for="bio">バイオ:</label>
-        <input type="text" id="bio" name="bio"><br>
-        <button type="submit">保存</button>
-    </form>
+    <div class="content">
+        <form id="profile-form" method="POST">
+            <!-- CSRFトークンをフォーム内に追加 -->
+            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+            <label for="full_name">フルネーム:</label>
+            <input type="text" id="full_name" name="full_name" required><br>
+            <label for="bio">自己紹介:</label>
+            <input type="text" id="bio" name="bio"><br>
+            <button type="submit">保存</button>
+        </form>
+    </div>
 </body>
 
 <!-- Toastifyの読み込み -->

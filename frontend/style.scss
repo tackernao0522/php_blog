@@ -1,3 +1,4 @@
+// style.scss
 body {
   font-family: Arial, sans-serif;
   text-align: center;
@@ -12,7 +13,7 @@ body {
   padding: 10px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; // 垂直方向に中央配置
 }
 
 .header nav {
@@ -25,7 +26,7 @@ body {
 .header span {
   text-decoration: none;
   color: #fff;
-  line-height: 48px;
+  line-height: 48px; // 中央に配置
   margin-right: 10px;
 }
 
@@ -82,15 +83,15 @@ button {
 }
 
 table {
-  margin: 0 auto;
-  max-width: 60%;
+  margin: 0 auto; // 中央配置
+  max-width: 60%; // 最大幅を指定
   border-collapse: collapse;
   border: 1px solid #ccc;
   width: 100%;
 }
 
 table th, table td {
-  width: 50%;
+  width: 50%; // thとtdの幅を均等に分ける
   padding: 8px;
   text-align: left;
   border: 1px solid #ccc;
@@ -103,4 +104,4 @@ table th {
 
 table tr:nth-child(even) {
   background-color: #f2f2f2;
-}/*# sourceMappingURL=style.css.map */
+}

@@ -5,11 +5,12 @@ require_once 'UserManagerImpl.php';
 require_once 'PasswordHasher.php';
 require_once 'config.php';
 require_once 'UserImpl.php';
+require_once 'header.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-session_start();
+// session_start();
 
 // アクセス制御: ログイン済みの場合、プロフィールページにリダイレクト
 if (isset($_SESSION['user_id'])) {
@@ -60,18 +61,21 @@ $_SESSION['csrf_token'] = $csrfToken;
 </head>
 
 <body>
+    <?php require_once 'header.php'; ?>
     <h1>ユーザー登録</h1>
-    <form id="register-form" method="POST">
-        <!-- CSRFトークンをフォーム内に追加 -->
-        <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-        <label for="username">ユーザー名:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="email">メールアドレス:</label>
-        <input type="email" id="email" name="email" required><br>
-        <label for="password">パスワード:</label>
-        <input type="password" id="password" name="password" required><br>
-        <button type="submit">登録</button>
-    </form>
+    <div class="content">
+        <form id="register-form" method="POST">
+            <!-- CSRFトークンをフォーム内に追加 -->
+            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+            <label for="username">ユーザー名:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="email">メールアドレス:</label>
+            <input type="email" id="email" name="email" required><br>
+            <label for="password">パスワード:</label>
+            <input type="password" id="password" name="password" required><br>
+            <button type="submit">登録</button>
+        </form>
+    </div>
     <p id="register-message"></p>
 </body>
 

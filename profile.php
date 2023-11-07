@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // セッション開始
 session_start();
 
@@ -39,17 +42,29 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ユーザープロフィール</title>
+    <title>プロフィール</title>
     <link rel="stylesheet" type="text/css" href="frontend/style.css">
 </head>
 
 <body>
-    <h1>ユーザープロフィール</h1>
+    <?php require_once 'header.php'; ?>
+    <h1>プロフィール</h1>
     <div id="profile-info">
         <?php if ($userProfile) : ?>
-            <p class="info-label">User ID: <span class="info-value"><?php echo htmlspecialchars($_SESSION['user_id'], ENT_QUOTES, 'UTF-8'); ?></span></p>
-            <p class="info-label">Full Name: <span class="info-value"><?php echo htmlspecialchars($userProfile['full_name'], ENT_QUOTES, 'UTF-8'); ?></span></p>
-            <p class="info-label">Bio: <span class="info-value"><?php echo htmlspecialchars($userProfile['bio'], ENT_QUOTES, 'UTF-8'); ?></span></p>
+            <table>
+                <tr>
+                    <th>ユーザー ID:</th>
+                    <td><?php echo htmlspecialchars($_SESSION['user_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <tr>
+                    <th>フルネーム:</th>
+                    <td><?php echo htmlspecialchars($userProfile['full_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+                <tr>
+                    <th>自己紹介:</th>
+                    <td><?php echo htmlspecialchars($userProfile['bio'], ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+            </table>
         <?php endif; ?>
     </div>
 </body>

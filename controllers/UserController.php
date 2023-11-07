@@ -1,6 +1,10 @@
 <?php
-session_start();
 require_once 'UserProfile.php';
+if (session_status() == PHP_SESSION_NONE) {
+    // セッションがまだ開始されていない場合にのみセッションを開始
+    session_start();
+}
+
 
 class UserController
 {
