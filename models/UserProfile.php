@@ -1,7 +1,6 @@
 <?php
-
 // db接続のrequire
-require_once 'db.php';
+require_once(__DIR__.'../../database/db.php');
 
 // セッション開始
 // session_start();

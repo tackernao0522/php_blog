@@ -7,7 +7,7 @@ session_start();
 
 // ログインしていない場合、ログインページにリダイレクト
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: http://localhost:3000/views/users/auth/login.php");
     exit;
 }
 
@@ -16,7 +16,7 @@ $userProfile = null;
 
 try {
     // データベースに接続
-    require_once 'db.php';
+    require_once(__DIR__.'/../../database/db.php');
 
     // ユーザープロフィール情報を取得
     $stmt = $db->prepare("SELECT * FROM user_profiles WHERE user_id = :user_id");
@@ -43,11 +43,11 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>プロフィール</title>
-    <link rel="stylesheet" type="text/css" href="frontend/style.css">
+    <link rel="stylesheet" type="text/css" href="../../frontend/style.css">
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once(__DIR__.'/../component/header.php'); ?>
     <h1>プロフィール</h1>
     <div id="profile-info">
         <?php if ($userProfile) : ?>

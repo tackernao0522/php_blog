@@ -1,5 +1,4 @@
 <?php
-
 // リクエストパラメータからコントローラとアクションを取得
 $controller = $_GET['controller'] ?? 'home';
 $action = $_GET['action'] ?? 'index';
@@ -8,13 +7,13 @@ $action = $_GET['action'] ?? 'index';
 switch ($controller) {
 
     case 'home':
-        require 'controllers/HomeController.php';
+        require(__DIR__.'/controllers/HomeController.php');
         $controller = new HomeController();
         $controller->index();
         break;
 
     case 'user':
-        require 'controllers/UserController.php';
+        require(__DIR__.'/controllers/UserController.php');
         $controller = new UserController();
         $controller->login();
         break;

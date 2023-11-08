@@ -1,11 +1,11 @@
 <?php
-require_once 'User.php';
-require_once 'UserManager.php';
-require_once 'UserManagerImpl.php';
-require_once 'PasswordHasher.php';
-require_once 'config.php';
-require_once 'UserImpl.php';
-require_once 'header.php';
+require_once(__DIR__ . '/../../../models/User.php');
+require_once(__DIR__ . '/../../../services/UserManager.php');
+require_once(__DIR__ . '/../../../services/UserManagerImpl.php');
+require_once(__DIR__ . '/../../../services/PasswordHasher.php');
+require_once(__DIR__ . '/../../../database/config.php');
+require_once(__DIR__ . '/../../../services/UserImpl.php');
+// require_once(__DIR__ . '/../../../views/component/header.php');
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -14,7 +14,7 @@ ini_set('display_errors', 1);
 
 // アクセス制御: ログイン済みの場合、プロフィールページにリダイレクト
 if (isset($_SESSION['user_id'])) {
-    header("Location: profile.php");
+    header("Location: localhost:3000/views/users/profile.php");
     exit;
 }
 
@@ -36,9 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userManager = new UserManagerImpl();
 
     if ($userManager->createUser($user)) {
+        if (session_status() == PHP_SESSION_NONE) {
+            // セッションがまだ開始されていない場合にのみセッションを開始
+            session_start();
+        }
         $_SESSION['toast_message'] = 'ログインしてください。';
 
-        header("Location: login.php");
+        header("Location: http://localhost:3000/views/users/auth/login.php");
         exit;
     } else {
         echo 'ユーザー登録に失敗しました。';
@@ -57,11 +61,11 @@ $_SESSION['csrf_token'] = $csrfToken;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ユーザー登録</title>
-    <link rel="stylesheet" type="text/css" href="frontend/style.css">
+    <link rel="stylesheet" type="text/css" href="../../../frontend/style.css">
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once(__DIR__ . '/../../component/header.php') ?>
     <h1>ユーザー登録</h1>
     <div class="content">
         <form id="register-form" method="POST">

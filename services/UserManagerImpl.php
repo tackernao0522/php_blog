@@ -1,7 +1,7 @@
 <?php
-require_once 'User.php';
+require_once(__DIR__.'/../models/User.php');
 require_once 'UserManager.php';
-require_once 'config.php';
+require_once(__DIR__.'/../database/config.php');
 
 class UserManagerImpl implements UserManager
 {

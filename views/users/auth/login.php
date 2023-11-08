@@ -1,13 +1,13 @@
 <?php
 // 必要なファイルをインクルード
-require_once 'User.php';
-require_once 'UserManager.php';
-require_once 'UserManagerImpl.php';
-require_once 'PasswordHasher.php';
-require_once 'config.php';
-require_once 'UserImpl.php';
-require_once 'controllers/UserController.php';
-require_once 'header.php';
+require_once(__DIR__ . '/../../../models/User.php');
+require_once(__DIR__ . '/../../../services/UserManager.php');
+require_once(__DIR__ . '/../../../services/UserManagerImpl.php');
+require_once(__DIR__ . '/../../../services/PasswordHasher.php');
+require_once(__DIR__ . '/../../../database/config.php');
+require_once(__DIR__ . '/../../../services/UserImpl.php');
+require_once(__DIR__ . '/../../../controllers/UserController.php');
+require_once(__DIR__ . '/../../component/header.php');
 
 // エラーレポーティングを設定
 error_reporting(E_ALL);
@@ -21,7 +21,7 @@ $userController = new UserController();
 
 if ($userController->isUserLoggedIn()) {
     // ログイン済みの場合、プロフィールページにリダイレクト
-    header("Location: profile.php");
+    header("Location: http://localhost:3000/views/users/profile.php");
     exit;
 }
 
@@ -43,15 +43,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // プロフィールが登録されていない場合、プロフィール登録画面にリダイレクト
             $userProfile = getUserProfile($user->getId());
             if (!$userProfile) {
+                if ((isset($_SESSION['logout_message']))) {
+                    session_destroy();
+                }
                 $_SESSION['toast_profile_input_message'] = 'プロフィールを登録してください。';
-                header("Location: profile_input.php");
+                header("Location: http://localhost:3000/views/users/profile_input.php");
                 exit;
             }
 
             // プロフィール情報をセッションに保存
             $_SESSION['userProfile'] = $userProfile;
 
-            header("Location: profile.php"); // プロフィールページにリダイレクト
+            header("Location: http://localhost:3000/views/users/profile.php"); // プロフィールページにリダイレクト
             exit;
         } else {
             echo "認証エラー";
@@ -73,11 +76,11 @@ $_SESSION['csrf_token'] = $csrfToken;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ユーザーログイン</title>
-    <link rel="stylesheet" type="text/css" href="frontend/style.css">
+    <link rel="stylesheet" type="text/css" href="../../../frontend/style.css">
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once(__DIR__ . '/../../component/header.php'); ?>
     <h1>ユーザーログイン</h1>
     <div class="content">
         <form id="login-form" method="POST" action="login.php">
@@ -104,6 +107,19 @@ $_SESSION['csrf_token'] = $csrfToken;
                     background: "linear-gradient(to right, #00b09b, #96c93d)",
                 }
             }).showToast();
+        <?php endif; ?>
+        <?php if (isset($_SESSION['logout_message'])) : ?>
+            Toastify({
+                text: "<?php echo $_SESSION['logout_message']; ?>",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
+            <?php session_destroy(); ?>
         <?php endif; ?>
     </script>
 </body>

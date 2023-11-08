@@ -1,5 +1,8 @@
 <?php
-require_once 'UserProfile.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// require_once(__DIR__ . '/../models/UserProfile.php');
 if (session_status() == PHP_SESSION_NONE) {
     // セッションがまだ開始されていない場合にのみセッションを開始
     session_start();
@@ -8,53 +11,72 @@ if (session_status() == PHP_SESSION_NONE) {
 
 class UserController
 {
-    public function login()
-    {
-        // ログイン処理
-        if ($this->isUserLoggedIn()) {
-            // ログイン済みの場合、プロフィールページにリダイレクト
-            header("Location: profile.php");
-            exit;
-        }
-        $this->render('login.php');
-    }
+    // public function login()
+    // {
+    //     // ログイン処理
+    //     if ($this->isUserLoggedIn()) {
+    //         // ログイン済みの場合、プロフィールページにリダイレクト
+    //         header("Location: profile.php");
+    //         exit;
+    //     }
+    //     $this->render('views/users/auth/login.php');
+    // }
 
-    public function register()
-    {
-        // ユーザー処理
-        $this->render('register.php');
-    }
+    // public function register()
+    // {
+    //     // ユーザー処理
+    //     $this->render('views/users/auth/register.php');
+    // }
 
-    public function profile()
-    {
-        if ($this->isUserLoggedIn()) {
-            // ユーザープロフィールを取得
-            $userProfile = getUserProfile($_SESSION['user_id']);
+    // public function profile()
+    // {
+    //     if ($this->isUserLoggedIn()) {
+    //         // ユーザープロフィールを取得
+    //         $userProfile = getUserProfile($_SESSION['user_id']);
 
-            if (!$userProfile) {
-                exit('プロフィールがありません');
-            }
+    //         if (!$userProfile) {
+    //             exit('プロフィールがありません');
+    //         }
 
-            $_SESSION['userProfile'] = $userProfile;
-            $this->render('profile.php');
-        } else {
-            // ログインしていない場合、ログインページにリダイレクト
-            header("Location: login.php");
-            exit;
-        }
-    }
+    //         $_SESSION['userProfile'] = $userProfile;
+    //         $this->render('views/users/profile.php');
+    //     } else {
+    //         // ログインしていない場合、ログインページにリダイレクト
+    //         header("Location: login.php");
+    //         exit;
+    //     }
+    // }
 
-    public function logout()
-    {
-        // ログアウト処理
-        if ($this->isUserLoggedIn()) {
-            // ログイン中の場合、セッションを破棄してログアウト
-            session_destroy();
-        }
-        // ログインページにリダイレクト
-        header("Location: login.php");
-        exit;
-    }
+    // public function logout()
+    // {
+    //     ini_set('error_log', __DIR__ . '/../error.log');
+    //     var_dump("ログアウトメソッドが呼び出されました。");
+    //     // セッションが開始されていない場合は開始する
+    //     if (session_status() == PHP_SESSION_NONE) {
+    //         session_start();
+    //     }
+
+    //     // セッション変数のクリア
+    //     $_SESSION = array();
+
+    //     // セッションクッキーの削除
+    //     if (isset($_COOKIE[session_name()])) {
+    //         setcookie(session_name(), '', time() - 42000, '/');
+    //     }
+
+    //     // セッションを破棄する
+    //     session_destroy();
+
+    //     $this->render('views/logout_complete.php');
+    //     // ログインページにリダイレクト
+    //     header("Location: " . __DIR__ . "/../views/users/auth/login.php");
+
+    //     // トーストメッセージを設定
+    //     $_SESSION['toast_message'] = "ログアウトしました。";
+    //     error_log("This is an error message.");
+
+    //     exit();
+    // }
 
     // プロフィール登録処理を処理するメソッドを追加
     public function storeProfile()
@@ -66,7 +88,7 @@ class UserController
         }
 
         // データベースに接続
-        require_once 'db.php';
+        require_once(__DIR__ . '/../database/db.php');
 
         global $db;
 
@@ -114,8 +136,9 @@ class UserController
         return isset($_SESSION['user_id']);
     }
 
-    public function render($view)
-    {
-        require __DIR__ . '/../' . $view;
-    }
+    // public function render($view)
+    // {
+    //     require __DIR__ . '/../' . $view;
+    //     // require(__DIR__.'/../database');
+    // }
 }

@@ -1,5 +1,5 @@
 <?php
-require_once 'PasswordHasher.php';
+require_once(__DIR__.'/../services/PasswordHasher.php');
 require_once 'UserProfile.php';
 
 class User

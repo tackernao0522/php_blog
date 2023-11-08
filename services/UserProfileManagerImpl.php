@@ -1,7 +1,7 @@
 <?php
-require_once 'UserProfile.php';
+require_once(__DIR__ . '/../models/UserProfile.php');
 require_once 'UserProfileManager.php';
-require_once 'db.php'; // データベース接続用ファイル
+require_once(__DIR__ . '/../database/db.php'); // データベース接続用ファイル
 
 class UserProfileManagerImpl implements UserProfileManager
 {

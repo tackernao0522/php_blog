@@ -1,7 +1,7 @@
 <?php
 // UserController.phpをインクルード
-require_once 'controllers/UserController.php';
-require_once 'UserProfile.php';
+require_once(__DIR__ . '/../../controllers/UserController.php');
+require_once(__DIR__ . '/../../models/UserProfile.php');
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -11,7 +11,7 @@ $userController = new UserController();
 
 // ログインしていない場合、ログインページにリダイレクト
 if (!$userController->isUserLoggedIn()) {
-    header("Location: login.php");
+    header("Location: http://localhost:3000/views/users/auth/login.php");
     exit;
 }
 
@@ -52,7 +52,7 @@ $_SESSION['csrf_token'] = $csrfToken;
 </head>
 
 <body>
-    <?php require_once 'header.php'; ?>
+    <?php require_once(__DIR__ . '/../../views/component/header.php') ?>
     <h1>プロフィール登録</h1>
     <div class="content">
         <form id="profile-form" method="POST">
