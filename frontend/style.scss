@@ -90,7 +90,8 @@ table {
   width: 100%;
 }
 
-table th, table td {
+table th,
+table td {
   width: 50%; // thとtdの幅を均等に分ける
   padding: 8px;
   text-align: left;
@@ -104,4 +105,16 @@ table th {
 
 table tr:nth-child(even) {
   background-color: #f2f2f2;
+}
+
+.error {
+  color: #f00; /* エラーメッセージのテキストカラーを赤に設定 */
+  font-size: 14px; /* エラーメッセージのフォントサイズを調整 */
+  margin-top: 5px; /* エラーメッセージと入力フィールドの間にマージンを追加 */
+}
+
+.errors {
+  color: #f00; /* エラーメッセージのテキストカラーを赤に設定 */
+  font-size: 14px; /* エラーメッセージのフォントサイズを調整 */
+  margin-top: 5px; /* エラーメッセージと入力フィールドの間にマージンを追加 */
 }

@@ -57,9 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: http://localhost:3000/views/users/profile.php"); // プロフィールページにリダイレクト
             exit;
         } else {
+            session_destroy();
             echo "認証エラー";
         }
     } else {
+        session_destroy();
         die("CSRF攻撃を検知");
     }
 }
