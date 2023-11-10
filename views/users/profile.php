@@ -5,9 +5,12 @@ ini_set('display_errors', 1);
 // セッション開始
 session_start();
 
+ob_start(); // 出力バッファリングを開始
+
 // ログインしていない場合、ログインページにリダイレクト
 if (!isset($_SESSION['user_id'])) {
     header("Location: http://localhost:3000/views/users/auth/login.php");
+    ob_end_flush(); // 出力バッファリングを終了
     exit;
 }
 
@@ -16,7 +19,7 @@ $userProfile = null;
 
 try {
     // データベースに接続
-    require_once(__DIR__.'/../../database/db.php');
+    require_once(__DIR__ . '/../../database/db.php');
 
     // ユーザープロフィール情報を取得
     $stmt = $db->prepare("SELECT * FROM user_profiles WHERE user_id = :user_id");
@@ -29,6 +32,7 @@ try {
         // プロフィールが存在しない場合の処理
         // 例: 初めてプロフィールを設定する画面にリダイレクト
         header("Location: profile_input.php");
+        ob_end_flush(); // 出力バッファリングを終了
         exit;
     }
 } catch (PDOException $e) {
@@ -36,6 +40,7 @@ try {
 }
 ?>
 
+<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -47,7 +52,7 @@ try {
 </head>
 
 <body>
-    <?php require_once(__DIR__.'/../component/header.php'); ?>
+    <?php require_once(__DIR__ . '/../component/header.php'); ?>
     <h1>プロフィール</h1>
     <div id="profile-info">
         <?php if ($userProfile) : ?>
@@ -67,6 +72,26 @@ try {
             </table>
         <?php endif; ?>
     </div>
+
+    <!-- Toastifyの読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        <?php if (isset($_SESSION['profile_create_message'])) : ?>
+            // console.log("<?php echo $_SESSION['profile_create_message']; ?>");
+            Toastify({
+                text: "<?php echo $_SESSION['profile_create_message']; ?>",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
+            <?php unset($_SESSION['profile_create_message']); ?>
+        <?php endif; ?>
+    </script>
 </body>
 
 </html>

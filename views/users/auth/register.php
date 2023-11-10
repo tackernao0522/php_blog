@@ -1,11 +1,7 @@
 <?php
-require_once(__DIR__ . '/../../../models/User.php');
-require_once(__DIR__ . '/../../../services/UserManager.php');
-require_once(__DIR__ . '/../../../services/UserManagerImpl.php');
-require_once(__DIR__ . '/../../../services/PasswordHasher.php');
 require_once(__DIR__ . '/../../../database/config.php');
+require_once(__DIR__ . '/../../../validation/signup_validation.php');
 require_once(__DIR__ . '/../../../services/UserImpl.php');
-// require_once(__DIR__ . '/../../../views/component/header.php');
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -18,73 +14,21 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
-// existingUsernames() 関数のスタブ
-function existingUsernames($username)
-{
-    // この関数はユーザー名が既に存在するかどうかを確認するためのロジックを実装する必要があります。
-    // 仮に存在しないとする場合は false を返します。
-    return false;
-}
-
-// emailExists() 関数のスタブ
-function emailExists($email)
-{
-    // この関数はメールアドレスが既に存在するかどうかを確認するためのロジックを実装する必要があります。
-    // 仮に存在しないとする場合は false を返します。
-    return false;
-}
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // ここに修正を適用
-    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
-    $passwordConfirm = filter_input(INPUT_POST, 'password_confirm', FILTER_SANITIZE_SPECIAL_CHARS);
+    $csrfToken = bin2hex(random_bytes(32));
+    $_SESSION['csrf_token'] = $csrfToken;
 
-    // バリデーション
-    $errors = [];
-
-    // ユーザー名が空でないか確認
-    if (empty($username)) {
-        $errors['username'] = 'ユーザー名を入力してください。';
-    } elseif (
-        !(strlen($username) >= 3 && strlen($username) <= 20) ||
-        !preg_match('/^[a-zA-Z0-9_-]+$/', $username) ||
-        existingUsernames($username)
-    ) {
-        $errors['username'] = 'ユーザー名は3から20文字の英数字および一部の記号（_-）で構成され、既に使用されていない必要があります。';
-    }
-
-    // メールアドレスが空または無効な場合
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'メールアドレスは必須です。有効なメールアドレスを入力してください。';
-    } elseif (emailExists($email)) {
-        $errors['email'] = 'このメールアドレスは既に使用されています。';
-    }
-
-    // パスワードが空ではなく、一定の長さ以上であるか確認
-    if (empty($password) || strlen($password) < 8) {
-        $errors['password'] = 'パスワードは少なくとも6文字以上で入力してください。';
-    }
-
-    // パスワード確認が空でなく、パスワードと一致するか確認
-    if (empty($passwordConfirm) || $password !== $passwordConfirm) {
-        $errors['password_confirm'] = 'パスワードが一致しません。';
-    }
-
-
+    $errors = validateRegistration($_POST);
 
     if (empty($errors)) {
         $passwordHasher = new PasswordHasher();
-        $hashedPassword = $passwordHasher->hashPassword($password);
+        $hashedPassword = $passwordHasher->hashPassword($_POST['password']);
 
-        // ここでUserProfileに関する情報を取得または設定する必要があります
         $userId = 1; // ユーザーIDを適切な方法で設定
         $fullName = 'ユーザーのフルネーム'; // ユーザーのフルネームを設定
         $bio = 'ユーザーのバイオ'; // ユーザーのバイオを設定
 
-        $user = new UserImpl(0, $username, $email, $hashedPassword, $userId, $fullName, $bio);
+        $user = new UserImpl(0, $_POST['username'], $_POST['email'], $hashedPassword, $userId, $fullName, $bio);
         $userManager = new UserManagerImpl();
 
         if ($userManager->createUser($user)) {
@@ -101,11 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
-// CSRFトークンの生成
-$csrfToken = bin2hex(random_bytes(32));
-$_SESSION['csrf_token'] = $csrfToken;
-// var_dump($errors);
 ?>
 
 <!DOCTYPE html>

@@ -6,6 +6,8 @@ require_once(__DIR__ . '/../../models/UserProfile.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+ob_start(); // 出力バッファリングを開始
+
 // ユーザーコントローラークラスのインスタンスを作成
 $userController = new UserController();
 
@@ -28,8 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['csrf_token']) && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
         // editProfileメソッドを呼び出し
         $userController->storeProfile();
+        $_SESSION['profile_create_message'] = 'プロフィールが登録しました。';
         // storeProfileメソッド内で新しいプロフィールが作成された場合、profile.phpにリダイレクト
+        // var_dump($_SESSION['profile_create_message']);
         header("Location: profile.php");
+        ob_end_flush(); // 出力バッファリングを終了
         exit;
     } else {
         die("CSRF攻撃を検知");

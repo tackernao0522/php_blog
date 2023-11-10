@@ -134,4 +134,10 @@ GDPRなどのプライバシー規制へのコンプライアンス
 
 
 
+DELETE FROM users;
 
+ALTER SEQUENCE users_id_seq RESTART WITH 1;
+
+profile.php:57 Uncaught ReferenceError: var_dump is not defined
+    at profile.php:57:21
+(anonymous) @ profile.php:57

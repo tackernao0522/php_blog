@@ -11,73 +11,6 @@ if (session_status() == PHP_SESSION_NONE) {
 
 class UserController
 {
-    // public function login()
-    // {
-    //     // ログイン処理
-    //     if ($this->isUserLoggedIn()) {
-    //         // ログイン済みの場合、プロフィールページにリダイレクト
-    //         header("Location: profile.php");
-    //         exit;
-    //     }
-    //     $this->render('views/users/auth/login.php');
-    // }
-
-    // public function register()
-    // {
-    //     // ユーザー処理
-    //     $this->render('views/users/auth/register.php');
-    // }
-
-    // public function profile()
-    // {
-    //     if ($this->isUserLoggedIn()) {
-    //         // ユーザープロフィールを取得
-    //         $userProfile = getUserProfile($_SESSION['user_id']);
-
-    //         if (!$userProfile) {
-    //             exit('プロフィールがありません');
-    //         }
-
-    //         $_SESSION['userProfile'] = $userProfile;
-    //         $this->render('views/users/profile.php');
-    //     } else {
-    //         // ログインしていない場合、ログインページにリダイレクト
-    //         header("Location: login.php");
-    //         exit;
-    //     }
-    // }
-
-    // public function logout()
-    // {
-    //     ini_set('error_log', __DIR__ . '/../error.log');
-    //     var_dump("ログアウトメソッドが呼び出されました。");
-    //     // セッションが開始されていない場合は開始する
-    //     if (session_status() == PHP_SESSION_NONE) {
-    //         session_start();
-    //     }
-
-    //     // セッション変数のクリア
-    //     $_SESSION = array();
-
-    //     // セッションクッキーの削除
-    //     if (isset($_COOKIE[session_name()])) {
-    //         setcookie(session_name(), '', time() - 42000, '/');
-    //     }
-
-    //     // セッションを破棄する
-    //     session_destroy();
-
-    //     $this->render('views/logout_complete.php');
-    //     // ログインページにリダイレクト
-    //     header("Location: " . __DIR__ . "/../views/users/auth/login.php");
-
-    //     // トーストメッセージを設定
-    //     $_SESSION['toast_message'] = "ログアウトしました。";
-    //     error_log("This is an error message.");
-
-    //     exit();
-    // }
-
     // プロフィール登録処理を処理するメソッドを追加
     public function storeProfile()
     {
@@ -109,6 +42,8 @@ class UserController
                         $stmt->bindValue(':bio', $bio, PDO::PARAM_STR);
 
                         if ($stmt->execute()) {
+                            $_SESSION['profile_create_message'] = 'プロフィールを登録しました。';
+                            // var_dump($_SESSION['profile_create_message']);
                             // プロフィール情報の新規登録に成功した場合、プロフィール画面にリダイレクト
                             header("Location: profile.php");
                             exit;
@@ -135,10 +70,4 @@ class UserController
     {
         return isset($_SESSION['user_id']);
     }
-
-    // public function render($view)
-    // {
-    //     require __DIR__ . '/../' . $view;
-    //     // require(__DIR__.'/../database');
-    // }
 }

@@ -16,6 +16,10 @@ ini_set('display_errors', 1);
 // セッション開始
 // session_start();
 
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // UserController クラスのインスタンスを作成
 $userController = new UserController();
 
@@ -27,7 +31,11 @@ if ($userController->isUserLoggedIn()) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRFトークンの検証
-    if (isset($_SESSION['csrf_token']) && isset($_POST['csrf_token']) && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+    if (
+        isset($_SESSION['csrf_token']) &&
+        isset($_POST['csrf_token']) &&
+        hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
+    ) {
         // POSTデータからユーザー名とパスワードを取得
         $username = $_POST['username'];
         $password = $_POST['password'];
@@ -55,13 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['userProfile'] = $userProfile;
 
             header("Location: http://localhost:3000/views/users/profile.php"); // プロフィールページにリダイレクト
+            unset($_SESSION['auth_error']);
             exit;
         } else {
-            session_destroy();
+            $_SESSION['auth_error'] = true;
             echo "認証エラー";
         }
     } else {
-        session_destroy();
         die("CSRF攻撃を検知");
     }
 }
@@ -121,7 +129,9 @@ $_SESSION['csrf_token'] = $csrfToken;
                     background: "linear-gradient(to right, #00b09b, #96c93d)",
                 }
             }).showToast();
-            <?php session_destroy(); ?>
+            // session_destroy();
+            <?php unset($_SESSION['logout_message']) ?>
+            // unset($_SESSION['logout_message']);
         <?php endif; ?>
     </script>
 </body>
