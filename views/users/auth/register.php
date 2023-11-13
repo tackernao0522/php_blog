@@ -8,6 +8,9 @@ require_once(__DIR__ . '/../../../services/UserImpl.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// HTTPヘッダーのセキュリティ対策
+header('X-Frame-Options: DENY');
+
 // アクセス制御: ログイン済みの場合、プロフィールページにリダイレクト
 if (isset($_SESSION['user_id'])) {
     header("Location: localhost:3000/views/users/profile.php");
@@ -60,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -80,19 +82,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
             <label for="username">ユーザー名:</label>
             <input type="text" id="username" name="username" value="<?php echo isset($old['username']) ? htmlspecialchars($old['username'], ENT_QUOTES, 'UTF-8') : ''; ?>">
-            <?php if (isset($errors['username'])) echo '<span class="error">' . $errors['username'] . '</span>'; ?><br>
+            <?php if (isset($errors['username'])) echo '<span class="error">' . htmlspecialchars($errors['username'], ENT_QUOTES, 'UTF-8') . '</span>'; ?><br>
 
             <label for="email">メールアドレス:</label>
             <input type="email" id="email" name="email" value="<?php echo isset($old['email']) ? htmlspecialchars($old['email'], ENT_QUOTES, 'UTF-8') : ''; ?>">
-            <?php if (isset($errors['email'])) echo '<span class="error">' . $errors['email'] . '</span>'; ?>
+            <?php if (isset($errors['email'])) echo '<span class="error">' . htmlspecialchars($errors['email'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
 
             <label for="password">パスワード:</label>
-            <input type="password" id="password" name="password"><br>
-            <?php if (isset($errors['password'])) echo '<span class="error">' . $errors['password'] . '</span>'; ?>
+            <input type="password" id="password" name="password">
+            <?php if (isset($errors['password'])) echo '<span class="error">' . htmlspecialchars($errors['password'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
 
             <label for="password_confirm">パスワード確認</label>
             <input type="password" id="password_confirm" name="password_confirm">
-            <?php if (isset($errors['password_confirm'])) echo '<span class="errors">' . $errors['password_confirm'] . '</span>'; ?>
+            <?php if (isset($errors['password_confirm'])) echo '<span class="errors">' . htmlspecialchars($errors['password_confirm'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
 
             <button type="submit">登録</button>
         </form>

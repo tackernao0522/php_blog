@@ -7,14 +7,21 @@ require_once(__DIR__ . '/../../../services/PasswordHasher.php');
 require_once(__DIR__ . '/../../../database/config.php');
 require_once(__DIR__ . '/../../../services/UserImpl.php');
 require_once(__DIR__ . '/../../../controllers/UserController.php');
+require_once(__DIR__ . '/../../../validation/login_validation.php');
 require_once(__DIR__ . '/../../component/header.php');
 
 // エラーレポーティングを設定
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// HTTPヘッダーのセキュリティ対策
+header('X-Frame-Options: DENY');
+
 // セッション開始
 // session_start();
+
+// セッションIDの再生成
+session_regenerate_id(true);
 
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -29,6 +36,8 @@ if ($userController->isUserLoggedIn()) {
     exit;
 }
 
+$errors = $_SESSION['errors'] ?? [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRFトークンの検証
     if (
@@ -39,6 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // POSTデータからユーザー名とパスワードを取得
         $username = $_POST['username'];
         $password = $_POST['password'];
+
+        // ユーザーが入力した値をセッションに保存
+        $_SESSION['old']['username'] = $username;
+
+        // バリデーションを追加
+        $errors = validateLogin($_POST);
+        if (!empty($errors)) {
+            $_SESSION['errors'] = $errors;
+            session_write_close();
+            header("Location: http://localhost:3000/views/users/auth/login.php");
+            exit;
+        }
 
         // ユーザー認証
         $userManager = new UserManagerImpl();
@@ -66,8 +87,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             unset($_SESSION['auth_error']);
             exit;
         } else {
-            $_SESSION['auth_error'] = true;
-            echo "認証エラー";
+            $errors['password'] = 'パスワードが一致しません。';
+            $_SESSION['errors'] = $errors;
+            session_write_close();
+            header("Location: http://localhost:3000/views/users/auth/login.php");
+            exit;
         }
     } else {
         die("CSRF攻撃を検知");
@@ -78,7 +102,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $csrfToken = bin2hex(random_bytes(32));
 $_SESSION['csrf_token'] = $csrfToken;
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -97,9 +120,13 @@ $_SESSION['csrf_token'] = $csrfToken;
             <!-- CSRFトークンをフォーム内に追加 -->
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             <label for="username">ユーザー名:</label>
-            <input type="text" id="username" name="username" required><br>
+            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($_SESSION['old']['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <?php if (isset($errors['username'])) echo '<span class="error">' . htmlspecialchars($errors['username'], ENT_QUOTES, 'UTF-8') . '</span>';
+            unset($_SESSION['errors']['username']); ?>
             <label for="password">パスワード:</label>
-            <input type="password" id="password" name="password" required><br>
+            <input type="password" id="password" name="password">
+            <?php if (isset($errors['password'])) echo '<span class="error">' . htmlspecialchars($errors['password'], ENT_QUOTES, 'UTF-8') . '</span>';
+            unset($_SESSION['errors']['password']); ?>
             <button type="submit">ログイン</button>
         </form>
     </div>
@@ -134,6 +161,10 @@ $_SESSION['csrf_token'] = $csrfToken;
             // unset($_SESSION['logout_message']);
         <?php endif; ?>
     </script>
+    <?php
+    // ページの最後で古い値をリセット
+    $_SESSION['old'] = [];
+    ?>
 </body>
 
 </html>
