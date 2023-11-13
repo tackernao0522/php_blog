@@ -1,4 +1,6 @@
 <?php
+session_start();  // Move this to the top of your script
+
 require_once(__DIR__ . '/../../../database/config.php');
 require_once(__DIR__ . '/../../../validation/signup_validation.php');
 require_once(__DIR__ . '/../../../services/UserImpl.php');
@@ -6,14 +8,14 @@ require_once(__DIR__ . '/../../../services/UserImpl.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// session_start();
-
 // アクセス制御: ログイン済みの場合、プロフィールページにリダイレクト
 if (isset($_SESSION['user_id'])) {
     header("Location: localhost:3000/views/users/profile.php");
     exit;
 }
 
+$errors = [];
+$old = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $csrfToken = bin2hex(random_bytes(32));
     $_SESSION['csrf_token'] = $csrfToken;
@@ -32,10 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userManager = new UserManagerImpl();
 
         if ($userManager->createUser($user)) {
-            if (session_status() == PHP_SESSION_NONE) {
-                // セッションがまだ開始されていない場合にのみセッションを開始
-                session_start();
-            }
+            // ログイン成功後にセッションIDを再生成
+            session_regenerate_id(true);
+
             $_SESSION['toast_message'] = 'ログインしてください。';
 
             header("Location: http://localhost:3000/views/users/auth/login.php");
@@ -43,9 +44,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo 'ユーザー登録に失敗しました。';
         }
+    } else {
+        // バリデーションエラーがある場合、エラーメッセージとフォームの値をセッションに保存し、フォームページにリダイレクトします。
+        $_SESSION['errors'] = $errors;
+        $_SESSION['old'] = $_POST;
+        header("Location: http://localhost:3000/views/users/auth/register.php");
+        exit;
     }
+} else {
+    // GETリクエストの場合、セッションからエラーメッセージとフォームの値を取得し、それを表示します。
+    $errors = $_SESSION['errors'] ?? [];
+    $old = $_SESSION['old'] ?? [];
+    unset($_SESSION['errors']);  // エラーメッセージをセッションから削除します。
+    unset($_SESSION['old']);  // フォームの値をセッションから削除します。
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -65,11 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- CSRFトークンをフォーム内に追加 -->
             <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
             <label for="username">ユーザー名:</label>
-            <input type="text" id="username" name="username" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8') : ''; ?>">
+            <input type="text" id="username" name="username" value="<?php echo isset($old['username']) ? htmlspecialchars($old['username'], ENT_QUOTES, 'UTF-8') : ''; ?>">
             <?php if (isset($errors['username'])) echo '<span class="error">' . $errors['username'] . '</span>'; ?><br>
 
             <label for="email">メールアドレス:</label>
-            <input type="email" id="email" name="email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8') : ''; ?>">
+            <input type="email" id="email" name="email" value="<?php echo isset($old['email']) ? htmlspecialchars($old['email'], ENT_QUOTES, 'UTF-8') : ''; ?>">
             <?php if (isset($errors['email'])) echo '<span class="error">' . $errors['email'] . '</span>'; ?>
 
             <label for="password">パスワード:</label>
