@@ -1,4 +1,3 @@
-@charset "UTF-8";
 body {
   font-family: Arial, sans-serif;
   text-align: center;
@@ -15,22 +14,18 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-
 .header nav {
   display: block;
   flex: auto;
   text-align: right;
 }
-
-.header a,
-.header span {
+.header a, .header span {
   text-decoration: none;
   color: #fff;
   line-height: 48px;
   margin-right: 10px;
 }
-
-.header a:hover {
+.header a:hover, .header span:hover {
   color: rgb(0, 255, 195);
 }
 
@@ -43,15 +38,15 @@ body {
   background-color: #fff;
   text-align: center;
 }
-
-label,
-input {
+.content label, .content input, .content textarea {
   display: block;
   margin-bottom: 10px;
   width: 100%;
 }
-
-button {
+.content textarea {
+  height: 100px;
+}
+.content button {
   background-color: #333;
   color: #fff;
   padding: 10px 20px;
@@ -59,13 +54,11 @@ button {
   cursor: pointer;
   width: 100%;
 }
-
-.info-label {
+.content .info-label {
   font-weight: bold;
   margin-top: 20px;
 }
-
-.info-value {
+.content .info-value {
   display: block;
   font-weight: normal;
 }
@@ -89,32 +82,23 @@ table {
   border: 1px solid #ccc;
   width: 100%;
 }
-
-table th,
-table td {
+table th, table td {
   width: 50%;
   padding: 8px;
   text-align: left;
   border: 1px solid #ccc;
 }
-
 table th {
   background-color: #333;
   color: #fff;
 }
-
 table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-.error {
-  color: #f00; /* エラーメッセージのテキストカラーを赤に設定 */
-  font-size: 14px; /* エラーメッセージのフォントサイズを調整 */
-  margin-top: 5px; /* エラーメッセージと入力フィールドの間にマージンを追加 */
-}
-
+.error,
 .errors {
-  color: #f00; /* エラーメッセージのテキストカラーを赤に設定 */
-  font-size: 14px; /* エラーメッセージのフォントサイズを調整 */
-  margin-top: 5px; /* エラーメッセージと入力フィールドの間にマージンを追加 */
+  color: #f00;
+  font-size: 14px;
+  margin-top: 5px;
 }/*# sourceMappingURL=style.css.map */

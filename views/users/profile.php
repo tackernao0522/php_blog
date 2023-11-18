@@ -67,7 +67,7 @@ try {
                 </tr>
                 <tr>
                     <th>自己紹介:</th>
-                    <td><?php echo htmlspecialchars($userProfile['bio'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo nl2br(htmlspecialchars($userProfile['bio'], ENT_QUOTES, 'UTF-8')); ?></td>
                 </tr>
             </table>
         <?php endif; ?>
