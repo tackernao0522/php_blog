@@ -36,11 +36,11 @@ try {
         exit;
     }
 } catch (PDOException $e) {
-    echo 'データベースエラー: ' . $e->getMessage();
+    // データベースエラー: 詳細なエラーメッセージを表示しない
+    echo 'データベースエラーが発生しました。';
 }
 ?>
 
-<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -80,7 +80,7 @@ try {
         <?php if (isset($_SESSION['profile_create_message'])) : ?>
             // console.log("<?php echo $_SESSION['profile_create_message']; ?>");
             Toastify({
-                text: "<?php echo $_SESSION['profile_create_message']; ?>",
+                text: "<?php echo htmlspecialchars($_SESSION['profile_create_message'], ENT_QUOTES, 'UTF-8'); ?>",
                 duration: 3000,
                 close: true,
                 gravity: "top",

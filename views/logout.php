@@ -4,13 +4,14 @@ session_start();
 
 // トースターメッセージを設定
 
-// ここでCSRFトークンを再生成
-$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 // セッション破棄
 session_destroy();
 
 session_start();
+
+// ここでCSRFトークンを再生成
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 $_SESSION['logout_message'] = 'ログアウトしました。';
 // ログインページにリダイレクト
