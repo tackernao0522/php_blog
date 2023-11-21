@@ -4,6 +4,11 @@ session_start();  // Move this to the top of your script
 require_once(__DIR__ . '/../../../database/config.php');
 require_once(__DIR__ . '/../../../validation/signup_validation.php');
 require_once(__DIR__ . '/../../../services/UserImpl.php');
+require(__DIR__ . '/../../../vendor/autoload.php');
+
+use SendGrid\Mail\Mail;
+
+$email = new Mail();
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -39,6 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($userManager->createUser($user)) {
             // ログイン成功後にセッションIDを再生成
             session_regenerate_id(true);
+
+            require_once(__DIR__ . '/../../../sendMail/EmailHelper.php');
+            // メール送信
+            \sendMail\sendRegistrationEmail($user->getEmail());
 
             $_SESSION['toast_message'] = 'ログインしてください。';
 

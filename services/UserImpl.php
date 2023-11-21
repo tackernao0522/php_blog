@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__.'/../models/UserProfile.php');
+require_once(__DIR__ . '/../models/UserProfile.php');
 
 class UserImpl extends User
 {
