@@ -66,6 +66,63 @@ class UserController
         }
     }
 
+    public function updateLoginInfo()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: http://localhost:3000/views/users/auth/login.php");
+            exit;
+        }
+
+        // データベースに接続
+        require_once(__DIR__ . '/../database/db.php');
+
+        global $db;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // CSRF トークンの検証
+            if (isset($_POST['csrf_token']) && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+                // ユーザー情報を受け取り、データベースを更新する処理
+                $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_SPECIAL_CHARS);
+                $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+                // パスワードをハッシュ化
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+                // データベース接続が成功したか確認
+                if ($db) {
+                    try {
+                        // プリペアステートメントの宣言
+                        $stmt = $db->prepare("UPDATE users SET username = :username, email = :email, password = :password WHERE id = :user_id");
+                        $stmt->bindValue(':username', $username, PDO::PARAM_STR);
+                        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+                        $stmt->bindValue(':password', $hashedPassword, PDO::PARAM_STR);
+                        $stmt->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+
+                        if ($stmt->execute()) {
+                            $_SESSION['login_update_message'] = 'ログイン情報を更新しました。';
+                            // ログイン情報の更新に成功した場合、プロフィール画面にリダイレクト
+                            header("Location: http://localhost:3000/views/users/profile.php");
+                            exit;
+                        } else {
+                            // errorInfoの返り値をarrayのみにする
+                            /** @var array */
+                            $errorInfo = $stmt->errorInfo();
+
+                            die('失敗:' . implode(',', $errorInfo));
+                        }
+                    } catch (PDOException $e) {
+                        echo 'データベースエラー: ' . $e->getMessage();
+                    }
+                } else {
+                    die('データベースに接続できません。');
+                }
+            } else {
+                die("CSRF攻撃を検知");
+            }
+        }
+    }
+
     public function isUserLoggedIn()
     {
         return isset($_SESSION['user_id']);

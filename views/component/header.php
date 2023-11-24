@@ -9,6 +9,8 @@ $userController = new UserController();
             <!-- ログイン済み -->
             <?php if (basename($_SERVER['PHP_SELF']) === 'profile.php') : ?>
                 <!-- profile.php の画面にいる場合 -->
+                <a href="auth/update_loginInfo.php">ログイン情報変更</a>
+                <span>|</span>
                 <a href="/views/logout.php">ログアウト</a>
             <?php elseif (isset($_SESSION['userProfile'])) : ?>
                 <!-- プロフィールが登録完了している場合 -->
