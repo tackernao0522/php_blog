@@ -141,3 +141,15 @@ ALTER SEQUENCE users_id_seq RESTART WITH 1;
 profile.php:57 Uncaught ReferenceError: var_dump is not defined
     at profile.php:57:21
 (anonymous) @ profile.php:57
+
+カラムの型の確認
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'user_profiles';
+
+-- user_profilesテーブルの特定のカラムの制約確認
+SELECT ccu.column_name, tc.constraint_name, tc.constraint_type
+FROM information_schema.constraint_column_usage AS ccu
+JOIN information_schema.table_constraints AS tc ON ccu.constraint_name = tc.constraint_name
+WHERE ccu.table_name = 'user_profiles'
+  AND (ccu.column_name = 'user_id' OR ccu.column_name = 'full_name' OR ccu.column_name = 'bio' OR ccu.column_name = 'created_at');
