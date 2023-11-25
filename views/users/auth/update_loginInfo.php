@@ -7,6 +7,7 @@ require_once(__DIR__ . '/../../../database/db.php');
 require_once(__DIR__ . '/../../../models/User.php');
 require_once(__DIR__ . '/../../../controllers/UserController.php');
 require_once(__DIR__ . '/../../../services/PasswordHasher.php');
+require_once(__DIR__ . '/../../../services/UserManagerImpl.php');
 
 // エラーレポーティングを設定
 error_reporting(E_ALL);
@@ -19,6 +20,27 @@ header('X-Frame-Options: DENY');
 session_regenerate_id(true);
 
 $userController = new UserController();
+
+// ログインしているユーザーの情報を取得
+$userManager = new UserManagerImpl();
+$user = $userManager->getUserById($_SESSION['user_id']);
+
+// ログインしていない場合、ログインページにリダイレクト
+if (!$userController->isUserLoggedIn()) {
+
+    $_SESSION['toast_message'] = 'ログインしてください。';
+
+    header("Location: login.php");
+    exit;
+}
+
+// プロフィールが登録されていない場合、プロフィール登録画面にレダイレクト
+$existingProfile = getUserProfile($_SESSION['user_id']);
+if (!$existingProfile) {
+    $_SESSION['toast_profile_input_message'] = 'プロフィールを登録してください。';
+    header("Location: http://localhost:3000/views/users/profile_input.php");
+    exit;
+}
 
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -57,11 +79,11 @@ $_SESSION['csrf_token'] = $csrfToken;
             <!-- CSRFトークンをフォーム内に追加 -->
             <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
             <label for="username">ユーザー名:</label>
-            <input type="text" id="username" name="username" value="<?php echo isset($old['username']) ? htmlspecialchars($old['username'], ENT_QUOTES, 'UTF-8') : ''; ?>">
+            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user->getUsername(), ENT_QUOTES, 'UTF-8'); ?>">
             <?php if (isset($errors['username'])) echo '<span class="error">' . htmlspecialchars($errors['username'], ENT_QUOTES, 'UTF-8') . '</span>'; ?><br>
 
             <label for="email">メールアドレス:</label>
-            <input type="email" id="email" name="email" value="<?php echo isset($old['email']) ? htmlspecialchars($old['email'], ENT_QUOTES, 'UTF-8') : ''; ?>">
+            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user->getEmail(), ENT_QUOTES, 'UTF-8'); ?>">
             <?php if (isset($errors['email'])) echo '<span class="error">' . htmlspecialchars($errors['email'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
 
             <label for="password">パスワード:</label>

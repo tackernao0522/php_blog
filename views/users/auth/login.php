@@ -144,6 +144,20 @@ $_SESSION['csrf_token'] = $csrfToken;
                     background: "linear-gradient(to right, #00b09b, #96c93d)",
                 }
             }).showToast();
+            <?php unset($_SESSION['toast_message']) ?>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['login_update_message'])) : ?>
+            Toastify({
+                text: "<?php echo $_SESSION['login_update_message']; ?>",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
+            <?php unset($_SESSION['login_update_message']) ?>
         <?php endif; ?>
         <?php if (isset($_SESSION['logout_message'])) : ?>
             Toastify({

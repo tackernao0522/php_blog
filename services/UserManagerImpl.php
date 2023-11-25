@@ -1,7 +1,7 @@
 <?php
-require_once(__DIR__.'/../models/User.php');
+require_once(__DIR__ . '/../models/User.php');
 require_once 'UserManager.php';
-require_once(__DIR__.'/../database/config.php');
+require_once(__DIR__ . '/../database/config.php');
 
 class UserManagerImpl implements UserManager
 {
@@ -47,7 +47,11 @@ class UserManagerImpl implements UserManager
                 return null;
             }
 
-            return new User($user['id'], $user['username'], $user['email'], $user['password'], $user['passwordHasher'], $user['userProfile']);
+            // パスワードハッシャーとユーザープロフィールを設定
+            $passwordHasher = new PasswordHasher(); // パスワードハッシュの生成方法は適切に設定
+            $userProfile = getUserProfile($user['id']); // プロフィール情報を取得
+
+            return new User($user['id'], $user['username'], $user['email'], $user['password'], $passwordHasher, $userProfile);
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return null;

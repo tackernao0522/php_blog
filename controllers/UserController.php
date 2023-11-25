@@ -73,6 +73,13 @@ class UserController
             exit;
         }
 
+        // プロフィールが登録していない場合、プロフィール登録画面にリダイレクト
+        $existingProfile = getUserProfile($_SESSION['user_id']);
+        if (!$existingProfile) {
+            header("Location: http://localhost:3000/views/users/profile_input.php");
+            exit;
+        }
+
         // データベースに接続
         require_once(__DIR__ . '/../database/db.php');
 
@@ -100,9 +107,21 @@ class UserController
                         $stmt->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
 
                         if ($stmt->execute()) {
-                            $_SESSION['login_update_message'] = 'ログイン情報を更新しました。';
-                            // ログイン情報の更新に成功した場合、プロフィール画面にリダイレクト
-                            header("Location: http://localhost:3000/views/users/profile.php");
+                            // ログイン情報の更新に成功した場合、メッセージを一時的に保存
+                            $login_update_message = 'ログイン情報を更新しました。再ログインして下さい。';
+
+                            // 現在のセッションIDを保存
+                            $sessionId = session_id();
+
+                            // ログイン情報の更新に成功した場合、セッションを終了し、ログインページにリダイレクト
+                            session_destroy();
+
+                            // セッションを再開し、メッセージをセッションに設定
+                            session_id($sessionId);
+                            session_start();
+                            $_SESSION['login_update_message'] = $login_update_message;
+
+                            header("Location: http://localhost:3000/views/users/auth/login.php");
                             exit;
                         } else {
                             // errorInfoの返り値をarrayのみにする
