@@ -24,8 +24,10 @@ if (isset($_SESSION['user_id'])) {
 
 $errors = [];
 $old = [];
+
+$csrfToken = bin2hex(random_bytes(32));
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $csrfToken = bin2hex(random_bytes(32));
     $_SESSION['csrf_token'] = $csrfToken;
 
     $errors = validateRegistration($_POST);
