@@ -25,9 +25,9 @@ $userController = new UserController();
             <?php endif; ?>
         <?php else : ?>
             <!-- 未ログイン -->
-            <a href="login.php">ログイン</a>
+            <a href="http://localhost:3000/views/users/auth/login.php">ログイン</a>
             <span>|</span>
-            <a href="register.php">ユーザー登録</a>
+            <a href="http://localhost:3000/views/users/auth/register.php">ユーザー登録</a>
         <?php endif; ?>
     </nav>
 </div>
