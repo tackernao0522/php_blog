@@ -92,7 +92,11 @@ class UserManagerImpl implements UserManager
                 return null;
             }
 
-            return new User($user['id'], $user['username'], $user['email'], $user['password'], $user['passwordHasher'], $user['userProfile']);
+            // パスワードハッシャーとユーザープロフィールを設定
+            $passwordHasher = new PasswordHasher(); // パスワードハッシュの生成方法は適切に設定
+            $userProfile = null; // プロフィール情報はまだ取得できていないので null を設定
+
+            return new User($user['id'], $user['username'], $user['email'], $user['password'], $passwordHasher, $userProfile);
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return null;

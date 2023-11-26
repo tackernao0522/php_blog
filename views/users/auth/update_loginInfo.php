@@ -8,6 +8,7 @@ require_once(__DIR__ . '/../../../models/User.php');
 require_once(__DIR__ . '/../../../controllers/UserController.php');
 require_once(__DIR__ . '/../../../services/PasswordHasher.php');
 require_once(__DIR__ . '/../../../services/UserManagerImpl.php');
+require_once(__DIR__ . '/../../../validation/update_login_validation.php');
 
 // エラーレポーティングを設定
 error_reporting(E_ALL);
@@ -42,9 +43,8 @@ if (!$existingProfile) {
     exit;
 }
 
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+$errors = [];
+$old = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRFトークンの検証
@@ -52,52 +52,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("CSRF攻撃を検知");
     }
 
-    // UserControllerのupdateLoginInfoメソッドを呼び出す。
-    $userController->updateLoginInfo();
+    // バリデーションエラーを取得
+    $errors = validateUpdateLoginInfo($_POST);
+
+    // メールアドレスが既に存在するか確認
+    $email = $_POST['email'];
+    if ($email !== $user->getEmail() && $userManager->getUserByEmail($email)) {
+        $errors['email'] = 'このメールアドレスは既に使用されています。';
+    }
+
+    // バリデーションエラーがない場合、UserControllerのupdateLoginInfoメソッドを呼び出す。
+    if (empty($errors)) {
+        $userController->updateLoginInfo();
+        header("Location: http://localhost:3000/views/users/profile.php");
+        exit;
+    } else {
+        // バリデーションエラーがある場合、エラーメッセージとフォームの値をセッションに保存し、フォームページにリダイレクトします。
+        $_SESSION['errors'] = $errors;
+        $_SESSION['old'] = $_POST;
+        header("Location: http://localhost:3000/views/users/auth/update_loginInfo.php");
+        exit;
+    }
+} else {
+    // GETリクエストの場合、セッションからエラーメッセージとフォームの値を取得し、それを表示します。
+    $errors = $_SESSION['errors'] ?? [];
+    $old = $_SESSION['old'] ?? [];
+    unset($_SESSION['errors']);  // エラーメッセージをセッションから削除します。
+    unset($_SESSION['old']);  // フォームの値をセッションから削除します。
 }
 
 // CSRFトークンの生成
 $csrfToken = bin2hex(random_bytes(32));
 $_SESSION['csrf_token'] = $csrfToken;
-?>
 
-<!DOCTYPE html>
-<html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン情報更新</title>
-    <link rel="stylesheet" type="text/css" href="../../../frontend/style.css">
-</head>
-
-<body>
-    <?php require_once(__DIR__ . '/../../component/header.php') ?>
-    <h1>ログイン情報更新</h1>
-    <div class="content">
-        <form id="update-form" method="POST">
-            <!-- CSRFトークンをフォーム内に追加 -->
-            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-            <label for="username">ユーザー名:</label>
-            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user->getUsername(), ENT_QUOTES, 'UTF-8'); ?>">
-            <?php if (isset($errors['username'])) echo '<span class="error">' . htmlspecialchars($errors['username'], ENT_QUOTES, 'UTF-8') . '</span>'; ?><br>
-
-            <label for="email">メールアドレス:</label>
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user->getEmail(), ENT_QUOTES, 'UTF-8'); ?>">
-            <?php if (isset($errors['email'])) echo '<span class="error">' . htmlspecialchars($errors['email'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
-
-            <label for="password">パスワード:</label>
-            <input type="password" id="password" name="password">
-            <?php if (isset($errors['password'])) echo '<span class="error">' . htmlspecialchars($errors['password'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
-
-            <label for="password_confirm">パスワード確認</label>
-            <input type="password" id="password_confirm" name="password_confirm">
-            <?php if (isset($errors['password_confirm'])) echo '<span class="errors">' . htmlspecialchars($errors['password_confirm'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
-
-            <button type="submit">更新</button>
-        </form>
-    </div>
-    <p id="register-message"></p>
-</body>
-
-</html>
+require_once(__DIR__ . '/../../form/update_loginInfo_form.php');
