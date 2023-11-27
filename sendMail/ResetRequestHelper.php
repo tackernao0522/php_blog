@@ -29,7 +29,7 @@ function sendResetRequestEmail(string $toEmail, string $token)
 
         // メールが正常に送信されたかどうかを確認
         if ($response->statusCode() == 202) {
-            echo 'メールが正常に送信されました。';
+            $_SESSION['reset_request_message'] = '指定のメールアドレスにパスワード再設定のリンクを送信しました。';
         }
     } catch (Exception $e) {
         error_log('SendGrid Error: ' . $e->getMessage());

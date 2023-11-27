@@ -22,10 +22,6 @@ session_regenerate_id(true);
 
 $userController = new UserController();
 
-// ログインしているユーザーの情報を取得
-$userManager = new UserManagerImpl();
-$user = $userManager->getUserById($_SESSION['user_id']);
-
 // ログインしていない場合、ログインページにリダイレクト
 if (!$userController->isUserLoggedIn()) {
 
@@ -34,6 +30,10 @@ if (!$userController->isUserLoggedIn()) {
     header("Location: login.php");
     exit;
 }
+
+// ログインしているユーザーの情報を取得
+$userManager = new UserManagerImpl();
+$user = $userManager->getUserById($_SESSION['user_id']);
 
 // プロフィールが登録されていない場合、プロフィール登録画面にレダイレクト
 $existingProfile = getUserProfile($_SESSION['user_id']);
