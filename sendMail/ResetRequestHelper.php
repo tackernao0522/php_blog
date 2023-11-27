@@ -9,7 +9,7 @@ function sendResetRequestEmail(string $toEmail, string $token)
     $senderEmail = 'takaki_5573031@yahoo.co.jp';
     $subject = 'パスワードリセットリクエスト';
 
-    $resetLink = "http://localhost:3000/views/form/reset_password.php=" . $token;
+    $resetLink = "http://localhost:3000/views/users/auth/reset_password.php?token=" . $token;
     $emailBody = "パスワードリセットリクエストを受け付けました。以下のリンクをクリックしてパスワードをリセットしてください。\n\n" . $resetLink;
 
     $email = new \SendGrid\Mail\Mail();

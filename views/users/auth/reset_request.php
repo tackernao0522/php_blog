@@ -1,9 +1,15 @@
 <?php
 session_start(); // セッションを開始
-require_once(__DIR__ . '/../../sendMail/ResetRequestHelper.php');
-require_once(__DIR__ . '/../../database/db.php');
-require_once(__DIR__ . '/../../services/UserManagerImpl.php');
-require_once(__DIR__ . '/../../controllers/UserController.php');
+require_once(__DIR__ . '/../../../sendMail/ResetRequestHelper.php');
+require_once(__DIR__ . '/../../../database/db.php');
+require_once(__DIR__ . '/../../../services/UserManagerImpl.php');
+require_once(__DIR__ . '/../../../controllers/UserController.php');
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// HTTPヘッダーのセキュリティ対策
+header('X-Frame-Options: DENY');
 
 use function sendMail\sendResetRequestEmail;
 
@@ -30,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmt->execute([
                 ':email' => $email,
-                ':token' => password_hash($token, PASSWORD_DEFAULT), // トークンをハッシュ化して保存
+                ':token' => $token,  // ハッシュ化せずにトークンを保存
                 ':expires' => date('Y-m-d H:i:s', $expires),
             ]);
 
@@ -45,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($errors) || isset($_SESSION['reset_request_message'])) {
         // エラーがある場合は、エラーメッセージをセッションに保存してリダイレクト
         $_SESSION['errors'] = $errors;
-        header("Location: reset_request.php");
+        header("Location: http://localhost:3000/views/users/auth/reset_request.php");
         exit;
     }
 } else {
@@ -53,48 +59,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = $_SESSION['errors'] ?? [];
     unset($_SESSION['errors']);  // エラーメッセージをセッションから削除
 }
-?>
 
-<!DOCTYPE html>
-<html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>パスワードリセットリクエスト</title>
-    <link rel="stylesheet" type="text/css" href="../../../frontend/style.css">
-</head>
-
-<body>
-    <?php require_once(__DIR__ . '/../component/header.php') ?>
-    <h1>パスワードリセットリクエスト</h1>
-    <div class="content">
-        <form id="reset-request-form" method="POST" action="reset_request.php">
-            <label for="email">メールアドレス:</label>
-            <input type="email" id="email" name="email">
-            <?php if (isset($errors['email'])) echo '<span class="error">' . htmlspecialchars($errors['email'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
-            <?php if (isset($errors['user'])) echo '<span class="error">' . htmlspecialchars($errors['user'], ENT_QUOTES, 'UTF-8') . '</span>'; ?>
-            <button type="submit">リセットリンクを送信</button>
-        </form>
-    </div>
-
-    <!-- Toastifyの読み込み -->
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
-        <?php if (isset($_SESSION['reset_request_message'])) : ?>
-            Toastify({
-                text: "<?php echo $_SESSION['reset_request_message']; ?>",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                style: {
-                    background: "linear-gradient(to right, #00b09b, #96c93d)",
-                }
-            }).showToast();
-            <?php unset($_SESSION['reset_request_message']) ?>
-        <?php endif; ?>
-    </script>
-</body>
-
-</html>
+require_once(__DIR__ . '/../../form/reset_request_form.php');

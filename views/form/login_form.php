@@ -24,7 +24,7 @@
             <?php if (isset($errors['password'])) echo '<span class="error">' . htmlspecialchars($errors['password'], ENT_QUOTES, 'UTF-8') . '</span>';
             unset($_SESSION['errors']['password']); ?>
             <button type="submit">ログイン</button>
-            <a class="reset_request" href="../../form/reset_request.php">パスワードを忘れた場合</a>
+            <a class="reset_request" href="../auth/reset_request.php">パスワードを忘れた場合</a>
         </form>
     </div>
 
@@ -70,7 +70,20 @@
             }).showToast();
             // session_destroy();
             <?php unset($_SESSION['logout_message']) ?>
-            // unset($_SESSION['logout_message']);
+        <?php endif; ?>
+        <?php if (isset($_SESSION['reset_password_message'])) : ?>
+            Toastify({
+                text: "<?php echo $_SESSION['reset_password_message']; ?>",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
+            // session_destroy();
+            <?php unset($_SESSION['reset_password_message']) ?>
         <?php endif; ?>
     </script>
     <?php
