@@ -100,7 +100,7 @@ class UserController
                 if ($db) {
                     try {
                         // プリペアステートメントの宣言
-                        $stmt = $db->prepare("UPDATE users SET username = :username, email = :email, password = :password WHERE id = :user_id");
+                        $stmt = $db->prepare("UPDATE users SET username = :username, email = :email, password = :password, updated_at = NOW() WHERE id = :user_id");
                         $stmt->bindValue(':username', $username, PDO::PARAM_STR);
                         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
                         $stmt->bindValue(':password', $hashedPassword, PDO::PARAM_STR);

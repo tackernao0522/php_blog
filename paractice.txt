@@ -153,3 +153,7 @@ FROM information_schema.constraint_column_usage AS ccu
 JOIN information_schema.table_constraints AS tc ON ccu.constraint_name = tc.constraint_name
 WHERE ccu.table_name = 'user_profiles'
   AND (ccu.column_name = 'user_id' OR ccu.column_name = 'full_name' OR ccu.column_name = 'bio' OR ccu.column_name = 'created_at');
+
+DELETE FROM password_reset_requests;
+-- 対象のシーケンスをリセット
+SELECT setval('password_reset_requests_id_seq', 1, false);
