@@ -30,13 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             <!-- CSRFトークンをフォーム内に追加 -->
             <input type="hidden" name="csrf_token" value="<?php echo $data['csrfToken']; ?>">
             <label for="full_name">フルネーム:</label>
-            <input type="text" id="full_name" name="full_name" value="<?php echo isset($data['existingProfile']) ? htmlspecialchars($data['existingProfile']->getFullName(), ENT_QUOTES, 'UTF-8') : ''; ?>">
+            <input type="text" id="full_name" name="full_name" value="<?php echo isset($data['oldInput']['full_name']) ? htmlspecialchars($data['oldInput']['full_name'], ENT_QUOTES, 'UTF-8') : (isset($data['existingProfile']) ? htmlspecialchars($data['existingProfile']->getFullName(), ENT_QUOTES, 'UTF-8') : ''); ?>">
             <?php if (isset($data['errors']['full_name'])) : ?>
                 <p class="error"><?php echo htmlspecialchars($data['errors']['full_name'], ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?><br>
 
             <label for="bio">自己紹介:</label>
-            <textarea id="bio" name="bio" rows="4" cols="50"><?php echo isset($data['existingProfile']) ? htmlspecialchars($data['existingProfile']->getBio(), ENT_QUOTES, 'UTF-8') : ''; ?></textarea>
+            <textarea id="bio" name="bio" rows="4" cols="50"><?php echo isset($data['oldInput']['bio']) ? htmlspecialchars($data['oldInput']['bio'], ENT_QUOTES, 'UTF-8') : (isset($data['existingProfile']) ? htmlspecialchars($data['existingProfile']->getBio(), ENT_QUOTES, 'UTF-8') : ''); ?></textarea>
             <?php if (isset($data['errors']['bio'])) : ?>
                 <p class="error"><?php echo htmlspecialchars($data['errors']['bio'], ENT_QUOTES, 'UTF-8'); ?></p>
             <?php endif; ?><br>
