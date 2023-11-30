@@ -16,6 +16,8 @@ $userController = new UserController();
                 <a href="/views/logout.php">ログアウト</a>
             <?php elseif (isset($_SESSION['userProfile'])) : ?>
                 <!-- プロフィールが登録完了している場合 -->
+                <a href="auth/update_loginInfo.php">ログイン情報変更</a>
+                <span>|</span>
                 <a href="/views/users/profile.php">プロフィール</a>
                 <span>|</span>
                 <a href="/views/logout.php">ログアウト</a>
