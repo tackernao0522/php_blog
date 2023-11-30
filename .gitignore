@@ -2,3 +2,4 @@
 .DS_Store
 /views/users/auth/php_errors.log
 /views/form/php_errors.log
+/views/users/php_errors.log

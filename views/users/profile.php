@@ -91,6 +91,20 @@ try {
             }).showToast();
             <?php unset($_SESSION['profile_create_message']); ?>
         <?php endif; ?>
+        <?php if (isset($_SESSION['profile_update_message'])) : ?>
+            Toastify({
+                text: "<?php echo $_SESSION['profile_update_message']; ?>",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
+            <?php unset($_SESSION['profile_update_message']); ?>
+        <?php endif; ?>
+    </script>
     </script>
 </body>
 

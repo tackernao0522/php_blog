@@ -11,10 +11,12 @@ $userController = new UserController();
                 <!-- profile.php の画面にいる場合 -->
                 <a href="auth/update_loginInfo.php">ログイン情報変更</a>
                 <span>|</span>
+                <a href="update_profile.php">プロフィール更新</a>
+                <span>|</span>
                 <a href="/views/logout.php">ログアウト</a>
             <?php elseif (isset($_SESSION['userProfile'])) : ?>
                 <!-- プロフィールが登録完了している場合 -->
-                <a href="../../users/profile.php">プロフィール</a>
+                <a href="/views/users/profile.php">プロフィール</a>
                 <span>|</span>
                 <a href="/views/logout.php">ログアウト</a>
             <?php else : ?>

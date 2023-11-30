@@ -1,6 +1,6 @@
 <?php
 // db接続のrequire
-require_once(__DIR__.'../../database/db.php');
+require_once(__DIR__ . '/../database/db.php');
 
 // セッション開始
 // session_start();
@@ -71,4 +71,3 @@ class UserProfile
         return $this->bio;
     }
 }
-?>
