@@ -9,6 +9,7 @@ ob_start(); // 出力バッファリングを開始
 
 // ログインしていない場合、ログインページにリダイレクト
 if (!isset($_SESSION['user_id'])) {
+    $_SESSION['toast_message'] = 'ログインしてください。';
     header("Location: http://localhost:3000/views/users/auth/login.php");
     ob_end_flush(); // 出力バッファリングを終了
     exit;

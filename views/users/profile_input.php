@@ -17,6 +17,7 @@ $userController = new UserController();
 
 // ログインしていない場合、ログインページにリダイレクト
 if (!$userController->isUserLoggedIn()) {
+    $_SESSION['toast_message'] = 'ログインしてください。';
     header("Location: http://localhost:3000/views/users/auth/login.php");
     exit;
 }

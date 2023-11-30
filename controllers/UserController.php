@@ -80,14 +80,6 @@ class UserController
         // 既存のプロフィール情報を取得
         $existingProfile = getUserProfile($_SESSION['user_id']);
 
-        // バリデーションエラーが表示された後にセッションからエラーメッセージを削除
-        if (isset($_SESSION['validation_errors'])) {
-            unset($_SESSION['validation_errors']);
-        }
-        if (isset($_SESSION['old_input'])) {
-            unset($_SESSION['old_input']);
-        }
-
         // 必要な値を配列として返す
         return [
             'csrfToken' => $csrfToken,
